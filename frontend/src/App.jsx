@@ -4,7 +4,7 @@ import Hero from './components/Hero';
 import Features from './components/Features';
 import AIAgentEvaluator from './components/AIAgentEvaluator';
 import Footer from './components/Footer';
-import Closing from './components/CLosing';
+import Closing from './components/Closing';
 
 function App() {
   return (
