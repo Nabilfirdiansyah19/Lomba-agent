@@ -11,7 +11,6 @@ const AIAgentEvaluator = () => {
   const [logs, setLogs] = useState([]);
   const [results, setResults] = useState([]);
 
-  // URL Webhook n8n (cyogiswara.app.n8n.cloud)
   const WEBHOOK_POST = 'https://cyogiswara.app.n8n.cloud/webhook/upload-tugas';
 
   const handleFileUpload = (e, type) => {
@@ -45,11 +44,8 @@ const AIAgentEvaluator = () => {
 
       if (response.ok) {
         const rawData = await response.json();
-        console.log("Data Mentah n8n:", rawData);
-
         let finalRows = [];
 
-        // Menembus hierarki data sesuai screenshot console: all_data[0].data
         if (rawData.all_data && rawData.all_data[0] && Array.isArray(rawData.all_data[0].data)) {
           finalRows = rawData.all_data[0].data;
         } 
@@ -57,8 +53,6 @@ const AIAgentEvaluator = () => {
           finalRows = rawData.all_data;
         }
 
-        // LOGIKA ANTI-DUPLIKASI: 
-        // Menggunakan Map untuk memastikan setiap NIM hanya muncul satu kali di tabel
         const uniqueMap = new Map();
         finalRows.forEach(item => {
           const nim = item["NIM / File"];
@@ -66,18 +60,15 @@ const AIAgentEvaluator = () => {
         });
         
         const uniqueRows = Array.from(uniqueMap.values());
-
-        // Update state dengan data unik dan urutan terbaru di atas
         setResults([...uniqueRows].reverse());
         setLogs(prev => [
           ...prev, 
-          { id: Date.now(), msg: `Update: ${uniqueRows.length} mahasiswa unik ditampilkan.` }
+          { id: Date.now(), msg: `Sukses: ${uniqueRows.length} data mahasiswa diperbarui.` }
         ]);
       } else {
         setLogs(prev => [...prev, { id: Date.now(), msg: "Server Error (500): Cek alur n8n." }]);
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
       setLogs(prev => [...prev, { id: Date.now(), msg: "Gagal memproses data. Cek koneksi." }]);
     } finally {
       setIsEvaluating(false);
@@ -88,10 +79,11 @@ const AIAgentEvaluator = () => {
     <div className="max-w-6xl mx-auto px-4 md:px-6 py-10 relative z-10 font-sans text-left">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* INPUT PANEL */}
-        <div className="lg:col-span-7 space-y-6">
+        {/* KOLOM KIRI (7/12): INPUT & EXECUTE */}
+        <div className="lg:col-span-7 space-y-6 flex flex-col">
+          {/* Input Soal & Jawaban Sebelahan */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Input PDF Soal */}
+            {/* PDF Soal */}
             <div className="relative group">
               {files.soal && (
                 <button onClick={() => removeFile('soal')} className="absolute top-3 right-3 z-30 p-1 bg-red-500 rounded-full text-white hover:scale-110">
@@ -107,7 +99,7 @@ const AIAgentEvaluator = () => {
               </div>
             </div>
 
-            {/* Input ZIP Jawaban */}
+            {/* ZIP Jawaban */}
             <div className="relative group">
               {files.jawaban && (
                 <button onClick={() => removeFile('jawaban')} className="absolute top-3 right-3 z-30 p-1 bg-red-500 rounded-full text-white hover:scale-110">
@@ -124,23 +116,8 @@ const AIAgentEvaluator = () => {
             </div>
           </div>
 
-          <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-6 shadow-xl">
-            <div className="flex items-center gap-2 mb-4 text-indigo-400">
-              <MessageSquarePlus size={16} />
-              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest">Instruksi Khusus AI</h3>
-            </div>
-            <textarea 
-              value={extraContext}
-              onChange={(e) => setExtraContext(e.target.value)}
-              className="w-full bg-slate-950/40 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 min-h-[120px] resize-none"
-              placeholder="Tambahkan catatan khusus untuk penilaian..."
-            />
-          </div>
-        </div>
-
-        {/* LOGS & ACTION PANEL */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+          {/* Tombol Execute (Di bawah input) */}
+          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl flex-grow">
             <h3 className="text-xl font-bold mb-2">Execute AI Evaluator</h3>
             <p className="text-white/60 text-[11px] mb-6 leading-relaxed">Mulai otomatisasi penilaian untuk seluruh file mahasiswa di dalam folder ZIP.</p>
             <button
@@ -153,8 +130,11 @@ const AIAgentEvaluator = () => {
             </button>
             <BrainCircuit className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10" />
           </div>
+        </div>
 
-          <div className="bg-[#020617] border border-slate-800 rounded-3xl p-6 h-[200px] overflow-y-auto shadow-inner custom-scrollbar">
+        {/* KOLOM KANAN (5/12): SYSTEM LOGS FULL */}
+        <div className="lg:col-span-5">
+          <div className="bg-[#020617] border border-slate-800 rounded-3xl p-6 h-full min-h-[400px] overflow-y-auto shadow-inner custom-scrollbar">
             <div className="flex items-center gap-2 mb-4">
               <History size={12} className="text-emerald-500" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">System Logs</span>
@@ -171,14 +151,13 @@ const AIAgentEvaluator = () => {
           </div>
         </div>
 
-        {/* DATABASE TABLE */}
+        {/* DATABASE TABLE (Full Width) */}
         <div className="lg:col-span-12">
           <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-6 shadow-xl overflow-hidden">
             <div className="flex items-center gap-2 mb-6">
               <Table size={18} className="text-indigo-400" />
               <h3 className="text-sm font-bold text-slate-200 uppercase tracking-widest">Database Hasil Penilaian</h3>
             </div>
-            
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-950/50 text-slate-500 uppercase text-[9px] tracking-widest">
@@ -211,7 +190,6 @@ const AIAgentEvaluator = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
