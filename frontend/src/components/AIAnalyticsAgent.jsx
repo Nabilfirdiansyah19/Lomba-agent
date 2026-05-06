@@ -184,15 +184,22 @@ const AIAnalyticsAgent = () => {
                     const totalMhs = ring.total_mahasiswa || 1;
                     const pct = dist[g]?.persentase ?? (jumlah / totalMhs * 100);
                     return (
-                      <div key={g} className="flex items-center gap-3">
-                        <span className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black ring-1 ${c.badge}`}>{g}</span>
-                        <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div key={g} className="flex flex-col gap-2 pt-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className={`shrink-0 w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black ring-1 ${c.badge}`}>{g}</span>
+                            <span className="text-[11px] font-semibold text-slate-700">
+                              {g === 'A' ? 'Sangat Baik' : g === 'B' ? 'Baik' : g === 'C' ? 'Cukup' : g === 'D' ? 'Kurang' : 'Gagal'}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-600 text-right">
+                            <span className="font-bold text-slate-800">{jumlah} Mahasiswa</span>
+                            <span className="text-slate-400 ml-1">({pct.toFixed(0)}%)</span>
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: c.bar }} />
                         </div>
-                        <span className="text-[11px] text-slate-600 w-20 text-right shrink-0">
-                          <span className="font-bold text-slate-800">{jumlah}</span>
-                          <span className="text-slate-500"> ({pct.toFixed(0)}%)</span>
-                        </span>
                       </div>
                     );
                   })}

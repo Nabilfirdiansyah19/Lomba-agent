@@ -80,7 +80,7 @@ const AIAgentEvaluator = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* INPUT PANEL */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-12 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* PDF Soal */}
             <div className="relative group">
@@ -114,24 +114,11 @@ const AIAgentEvaluator = () => {
               </div>
             </div>
           </div>
-
-          <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-6 shadow-xl">
-            <div className="flex items-center gap-2 mb-4 text-indigo-400">
-              <MessageSquarePlus size={16} />
-              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest">Instruksi Khusus AI</h3>
-            </div>
-            <textarea 
-              value={extraContext}
-              onChange={(e) => setExtraContext(e.target.value)}
-              className="w-full bg-slate-950/40 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 min-h-[120px] resize-none"
-              placeholder="Tambahkan catatan khusus untuk penilaian..."
-            />
-          </div>
         </div>
 
         {/* LOGS & ACTION PANEL */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+        <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
             <h3 className="text-xl font-bold mb-2">Execute AI Evaluator</h3>
             <p className="text-white/60 text-[11px] mb-6 leading-relaxed">Mulai otomatisasi penilaian untuk seluruh file mahasiswa di dalam folder ZIP.</p>
             <button
@@ -144,9 +131,8 @@ const AIAgentEvaluator = () => {
             </button>
             <BrainCircuit className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10" />
           </div>
-        </div>
 
-          <div className="bg-[#020617] border border-slate-800 rounded-3xl p-6 h-[200px] overflow-y-auto shadow-inner custom-scrollbar">
+          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 h-[200px] overflow-y-auto shadow-inner custom-scrollbar">
             <div className="flex items-center gap-2 mb-4">
               <History size={12} className="text-emerald-600" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">System Logs</span>
@@ -175,7 +161,7 @@ const AIAgentEvaluator = () => {
                 <thead className="bg-slate-50 text-slate-500 uppercase text-[9px] tracking-widest border-b border-slate-200">
                   <tr>
                     <th className="p-4 font-bold border-b border-slate-200">Mahasiswa (Folder)</th>
-                    <th className="p-4 text-center font-bold border-b border-slate-200">Skor</th>
+                    <th className="p-4 text-center font-bold border-b border-slate-200">NILAI</th>
                     <th className="p-4 font-bold border-b border-slate-200">Mata Kuliah</th>
                     <th className="p-4 font-bold border-b border-slate-200">Feedback AI</th>
                   </tr>
@@ -184,7 +170,13 @@ const AIAgentEvaluator = () => {
                   {results.length > 0 ? results.map((res, i) => (
                     <tr key={i} className="hover:bg-slate-50 transition-colors group">
                       <td className="p-4 text-slate-800 font-medium">{res["NIM / File"] || "N/A"}</td>
-                      <td className="p-4 text-center text-emerald-600 font-bold text-sm">{res["Score"] ?? 0}</td>
+                      <td className={`p-4 text-center font-bold text-sm ${
+                        (res["Score"] ?? 0) < 60 ? 'text-red-600' :
+                        (res["Score"] ?? 0) < 80 ? 'text-amber-500' :
+                        'text-emerald-600'
+                      }`}>
+                        {res["Score"] ?? 0}
+                      </td>
                       <td className="p-4 text-slate-600">{res["Matkul"] || "N/A"}</td>
                       <td className="p-4 max-w-xs text-slate-500 italic text-[11px] leading-relaxed group-hover:text-slate-700 transition-colors">
                         {res["Feedback"] || "-"}
