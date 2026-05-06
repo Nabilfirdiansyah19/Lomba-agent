@@ -11,9 +11,13 @@
 
 body {
   background-color: var(--bg-color);
-  color: #1e293b;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #0f172a;
+  font-family: 'Outfit', sans-serif;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: 'Zilla Slab', serif;
 }
 
 /* Kunci Efek Glass Aceternity */
