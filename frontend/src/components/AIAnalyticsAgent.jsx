@@ -13,7 +13,7 @@ const AIAnalyticsAgent = () => {
   // State LOKAL analytics — tidak berhubungan dengan state manapun di luar komponen ini
   const [analyticsData, setAnalyticsData] = useState(null);
   
-  const WEBHOOK_URL = 'https://cyogiswara.app.n8n.cloud/webhook/get-analitik';
+  const WEBHOOK_URL = 'https://danieldraft1.app.n8n.cloud/webhook-test/get-analitik';
 
   const addLog = (msg, type = 'info') => {
     setLogs(prev => [...prev, { id: Date.now() + Math.random(), msg, type }]);

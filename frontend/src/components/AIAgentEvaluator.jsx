@@ -11,7 +11,7 @@ const AIAgentEvaluator = () => {
   const [logs, setLogs] = useState([]);
   const [results, setResults] = useState([]);
 
-  const WEBHOOK_POST = 'https://cyogiswara.app.n8n.cloud/webhook/upload-tugas';
+  const WEBHOOK_POST = 'https://danieldraft1.app.n8n.cloud/webhook-test/upload-tugas';
 
   const handleFileUpload = (e, type) => {
     const file = e.target.files[0];
